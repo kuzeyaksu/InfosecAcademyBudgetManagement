@@ -1,0 +1,185 @@
+@model InfosecAcademyBudgetManagement.Models.BudgetReportViewModel
+
+@{
+    ViewData["Title"] = "Bütçe Raporu";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Bütçe Raporu @Model.Year</h1>
+        <div class="page-subtitle">Planlanan ve gerçekleşen harcamalar ile sapmalar.</div>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Geri</a>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="card chart-card h-100 dashboard-card">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-3">Kategori Bazlı (Senelik) Planlanan / Gerçekleşen</h5>
+                <div class="chart-wrapper">
+                    <canvas id="categoryTotalsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card chart-card h-100 dashboard-card">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-3">Aylık Planlanan / Gerçekleşen (Genel)</h5>
+                <div class="chart-wrapper">
+                    <canvas id="planActualChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card content-card">
+    <div class="card-header">Kategori Bazlı Aylık Plan / Gerçekleşen</div>
+    <div class="card-body">
+        <div class="row g-3">
+@for (var i = 0; i < Model.CategoryMonthlySeries.Count; i++) {
+    var series = Model.CategoryMonthlySeries[i];
+            <div class="col-lg-6">
+                <div class="accordion" id="categoryMonthlyAccordion-@i">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading-@i">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@i" aria-expanded="false" aria-controls="collapse-@i">
+                                @series.Name
+                            </button>
+                        </h2>
+                        <div id="collapse-@i" class="accordion-collapse collapse" aria-labelledby="heading-@i" data-bs-parent="#categoryMonthlyAccordion-@i">
+                            <div class="accordion-body">
+                                <div class="chart-wrapper">
+                                    <canvas id="categoryMonthlyChart-@i"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+}
+        </div>
+    </div>
+</div>
+
+<div class="card content-card">
+    <div class="card-body">
+        <table class="table table-striped align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Kategori</th>
+                    <th class="text-end">Planlanan</th>
+                    <th class="text-end">Gerçekleşen</th>
+                    <th class="text-end">Sapma</th>
+                    <th class="text-end">Sapma %</th>
+                </tr>
+            </thead>
+            <tbody>
+@foreach (var row in Model.CategoryRows) {
+                <tr>
+                    <td>@row.Name</td>
+                    <td class="text-end">@row.PlannedTotal.ToString("N2") TL</td>
+                    <td class="text-end">@row.ActualTotal.ToString("N2") TL</td>
+                    <td class="text-end">@row.Variance.ToString("N2") TL</td>
+                    <td class="text-end">@row.VariancePercent.ToString("N2")%</td>
+                </tr>
+}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        const monthLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthLabels));
+        const plannedMonthlyTotals = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PlannedMonthlyTotals));
+        const actualMonthlyTotals = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ActualMonthlyTotals));
+        const categoryLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CategoryRows.Select(x => x.Name)));
+        const categoryPlannedTotals = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CategoryRows.Select(x => x.PlannedTotal)));
+        const categoryActualTotals = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CategoryRows.Select(x => x.ActualTotal)));
+
+        new Chart(document.getElementById("categoryTotalsChart"), {
+            type: "bar",
+            data: {
+                labels: categoryLabels,
+                datasets: [
+                    {
+                        label: "Planlanan",
+                        data: categoryPlannedTotals,
+                        backgroundColor: "rgba(76, 201, 240, 0.85)"
+                    },
+                    {
+                        label: "Gerçekleşen",
+                        data: categoryActualTotals,
+                        backgroundColor: "rgba(247, 37, 133, 0.85)"
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        new Chart(document.getElementById("planActualChart"), {
+            type: "bar",
+            data: {
+                labels: monthLabels,
+                datasets: [
+                    {
+                        label: "Planlanan",
+                        data: plannedMonthlyTotals,
+                        backgroundColor: "rgba(76, 201, 240, 0.85)"
+                    },
+                    {
+                        label: "Gerçekleşen",
+                        data: actualMonthlyTotals,
+                        backgroundColor: "rgba(247, 37, 133, 0.85)"
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+@for (var i = 0; i < Model.CategoryMonthlySeries.Count; i++) {
+    var series = Model.CategoryMonthlySeries[i];
+<text>
+        new Chart(document.getElementById("categoryMonthlyChart-@i"), {
+            type: "bar",
+            data: {
+                labels: monthLabels,
+                datasets: [
+                    {
+                        label: "Planlanan",
+                        data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(series.Planned)),
+                        backgroundColor: "rgba(76, 201, 240, 0.85)"
+                    },
+                    {
+                        label: "Gerçekleşen",
+                        data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(series.Actual)),
+                        backgroundColor: "rgba(247, 37, 133, 0.85)"
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+</text>
+}
+    </script>
+}
+

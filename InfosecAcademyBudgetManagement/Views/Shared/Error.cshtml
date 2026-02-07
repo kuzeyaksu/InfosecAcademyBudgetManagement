@@ -1,0 +1,33 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Hata";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title text-danger">Hata</h1>
+        <div class="page-subtitle">İsteğiniz işlenirken bir hata oluştu.</div>
+    </div>
+</div>
+
+<div class="card content-card">
+    <div class="card-body">
+        @if (Model.ShowRequestId)
+        {
+            <p>
+                <strong>Request ID:</strong> <code>@Model.RequestId</code>
+            </p>
+        }
+
+        <h3 class="h5 mt-4">Geliştirme Modu</h3>
+        <p>
+            <strong>Development</strong> ortamına geçiş, oluşan hata hakkında daha ayrıntılı bilgi gösterecektir.
+        </p>
+        <p>
+            <strong>Development ortamı canlı uygulamalarda etkinleştirilmemelidir.</strong>
+            Bu, hatalardan gelen hassas bilgilerin kullanıcıya gösterilmesine neden olabilir.
+            Yerel hata ayıklama için <strong>ASPNETCORE_ENVIRONMENT</strong> değişkenini <strong>Development</strong> yapın ve uygulamayı yeniden başlatın.
+        </p>
+    </div>
+</div>
+

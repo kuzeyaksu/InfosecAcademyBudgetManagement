@@ -1,0 +1,42 @@
+@model IEnumerable<InfosecAcademyBudgetManagement.Models.BudgetPlan>
+
+@{
+    ViewData["Title"] = "Bütçeler";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Bütçeler</h1>
+        <div class="page-subtitle">Yıllık bütçe planlarını yönetin.</div>
+    </div>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Yeni Plan</a>
+</div>
+
+<div class="card content-card">
+    <div class="card-body">
+        <table class="table table-striped align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Yıl</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+@foreach (var plan in Model) {
+                <tr>
+                    <td>@plan.Year</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@plan.Id" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a asp-action="Report" asp-route-year="@plan.Year" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-graph-up"></i>
+                        </a>
+                    </td>
+                </tr>
+}
+            </tbody>
+        </table>
+    </div>
+</div>
+

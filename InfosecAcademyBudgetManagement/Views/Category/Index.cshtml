@@ -1,0 +1,50 @@
+@model IEnumerable<InfosecAcademyBudgetManagement.Models.Category>
+
+@{
+    ViewData["Title"] = "Kategoriler";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Kategoriler</h1>
+        <div class="page-subtitle">Masraf kategorilerini yönetin.</div>
+    </div>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Yeni Ekle</a>
+</div>
+
+@if (TempData["DeleteError"] is string deleteError)
+{
+    <div class="alert alert-warning">@deleteError</div>
+}
+
+<div class="card content-card">
+    <div class="card-body">
+        <table class="table table-striped align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Ad</th>
+                    <th class="text-end">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+@foreach (var item in Model) {
+                <tr>
+                    <td>@item.Name</td>
+                    <td class="text-end">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+}
+            </tbody>
+        </table>
+    </div>
+</div>
+

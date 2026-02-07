@@ -1,0 +1,114 @@
+@model IEnumerable<Cost.CostItem>
+
+@{
+    ViewData["Title"] = "Masraflar";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Masraflar</h1>
+        <div class="page-subtitle">Tüm masraflarınızı görüntüleyin ve yönetin.</div>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Yeni Ekle
+    </a>
+</div>
+
+<div class="card content-card">
+    <div class="card-body">
+        <table id="costTable" class="table cost-table table-striped align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Amount)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Date)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Category)
+                    </th>
+                    <th>Evrak</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+@{
+    var costs = Model?.ToList() ?? new List<Cost.CostItem>();
+    var total = costs.Sum(x => x.Amount);
+}
+            <tbody>
+@foreach (var item in costs) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @item.Amount.ToString("N2") TL
+                    </td>
+                    <td>
+                        @item.Date.ToString("dd.MM.yyyy")
+                    </td>
+                    <td>
+                        @item.Category?.Name
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(item.DocumentPath))
+                        {
+                            <a href="@item.DocumentPath" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+}
+            </tbody>
+            <tfoot>
+                <tr class="cost-total-row">
+                    <td><strong>Toplam</strong></td>
+                    <td><strong>@total.ToString("N2") TL</strong></td>
+                    <td colspan="4"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $("#costTable").DataTable({
+                pageLength: 10,
+                order: [[2, "desc"]],
+                columnDefs: [
+                    { orderable: false, targets: [4, 5] }
+                ],
+                language: {
+                    url: "https://cdn.datatables.net/plug-ins/1.13.8/i18n/tr.json"
+                },
+                dom: "Bfrtip",
+                buttons: [
+                    { extend: "copy", text: '<i class="bi bi-clipboard"></i> Kopyala' },
+                    { extend: "excel", text: '<i class="bi bi-file-earmark-excel"></i> Excel' },
+                    { extend: "csv", text: '<i class="bi bi-filetype-csv"></i> CSV' },
+                    { extend: "pdf", text: '<i class="bi bi-file-earmark-pdf"></i> PDF' },
+                    { extend: "print", text: '<i class="bi bi-printer"></i> Yazdır' }
+                ]
+            });
+        });
+    </script>
+}
+

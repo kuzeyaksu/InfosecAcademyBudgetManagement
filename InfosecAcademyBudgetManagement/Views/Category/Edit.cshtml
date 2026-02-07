@@ -1,0 +1,36 @@
+@model InfosecAcademyBudgetManagement.Models.Category
+
+@{
+    ViewData["Title"] = "Kategori Düzenle";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Kategori Düzenle</h1>
+        <div class="page-subtitle">Kategori bilgisini güncelleyin.</div>
+    </div>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-actions mt-2">
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

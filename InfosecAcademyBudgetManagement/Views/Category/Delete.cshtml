@@ -1,0 +1,29 @@
+@model InfosecAcademyBudgetManagement.Models.Category
+
+@{
+    ViewData["Title"] = "Kategori Sil";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Kategori Sil</h1>
+        <div class="page-subtitle">Bu işlem geri alınamaz.</div>
+    </div>
+</div>
+
+<div class="card content-card">
+    <div class="card-body">
+<p>Bu kategoriyi silmek istediğinize emin misiniz?</p>
+        <dl class="row mb-0">
+            <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Name)</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+        </dl>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post" class="form-actions mt-3">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Sil</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+</form>
+
