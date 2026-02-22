@@ -18,6 +18,7 @@
             <thead>
                 <tr>
                     <th>Yıl</th>
+                    <th>Versiyon</th>
                     <th>İşlemler</th>
                 </tr>
             </thead>
@@ -25,10 +26,17 @@
 @foreach (var plan in Model) {
                 <tr>
                     <td>@plan.Year</td>
+                    <td>V@plan.VersionNo</td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@plan.Id" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-pencil"></i>
                         </a>
+                        <form asp-action="CloneVersion" asp-route-id="@plan.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-copy"></i>
+                            </button>
+                        </form>
                         <a asp-action="Report" asp-route-year="@plan.Year" class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-graph-up"></i>
                         </a>

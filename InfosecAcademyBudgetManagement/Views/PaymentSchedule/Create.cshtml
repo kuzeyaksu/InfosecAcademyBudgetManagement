@@ -1,0 +1,68 @@
+@model InfosecAcademyBudgetManagement.Models.PaymentScheduleFormViewModel
+
+@{
+    ViewData["Title"] = "Ödeme Takvimi Kayıt";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Takvim Kaydı Ekle</h1>
+        <div class="page-subtitle">Borç veya alacak için yeni vade kaydı oluşturun.</div>
+    </div>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Type" class="form-label"></label>
+                    <select asp-for="Type" class="form-select">
+                        <option value="Borç">Borç</option>
+                        <option value="Alacak">Alacak</option>
+                    </select>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Amount" class="form-label"></label>
+                    <div class="input-group">
+                        <input asp-for="Amount" class="form-control" inputmode="decimal" />
+                        <span class="input-group-text">TL</span>
+                    </div>
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="DueDate" class="form-label"></label>
+                    <input asp-for="DueDate" class="form-control" type="text" asp-format="{0:dd.MM.yyyy}" placeholder="DD.MM.YYYY" />
+                    <span asp-validation-for="DueDate" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="CounterpartyId" class="form-label"></label>
+                    <select asp-for="CounterpartyId" class="form-select" asp-items="@(ViewData["Counterparties"] as SelectList)">
+                        <option value="">Seçiniz...</option>
+                    </select>
+                    <span asp-validation-for="CounterpartyId" class="text-danger"></span>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label asp-for="Note" class="form-label"></label>
+                    <textarea asp-for="Note" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Note" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-actions mt-2">
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

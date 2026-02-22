@@ -1,0 +1,74 @@
+@model IEnumerable<InfosecAcademyBudgetManagement.Models.PurchaseRequestListItemViewModel>
+
+@{
+    ViewData["Title"] = "Satın Alma Talepleri";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Satın Alma Talepleri</h1>
+        <div class="page-subtitle">Talep kayıtlarını oluşturun ve onay süreçlerini takip edin.</div>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Yeni Talep
+    </a>
+</div>
+
+<div class="card content-card">
+    <div class="card-body">
+        <table id="purchaseRequestTable" class="table table-striped align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Başlık</th>
+                    <th>Tutar</th>
+                    <th>Tarih</th>
+                    <th>Durum</th>
+                    <th>Talep Eden</th>
+                    <th>Onaylayan</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+@foreach (var item in Model ?? Enumerable.Empty<InfosecAcademyBudgetManagement.Models.PurchaseRequestListItemViewModel>())
+{
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Amount.ToString("N2") TL</td>
+                    <td>@item.RequestDate.ToString("dd.MM.yyyy")</td>
+                    <td>@item.Status</td>
+                    <td>@(string.IsNullOrWhiteSpace(item.RequestedBy) ? "-" : item.RequestedBy)</td>
+                    <td>@(string.IsNullOrWhiteSpace(item.ApprovedBy) ? "-" : item.ApprovedBy)</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a>
+@if (item.Status == "Beklemede" && (User.IsInRole("Yönetici") || User.IsInRole("Müdür")))
+{
+                        <form asp-action="Approve" asp-route-id="@item.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-success"><i class="bi bi-check2"></i></button>
+                        </form>
+                        <form asp-action="Reject" asp-route-id="@item.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="reason" value="Yönetim kararıyla reddedildi." />
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-x-lg"></i></button>
+                        </form>
+}
+                    </td>
+                </tr>
+}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $("#purchaseRequestTable").DataTable({
+                pageLength: 10,
+                order: [[2, "desc"]],
+                columnDefs: [{ orderable: false, targets: [6] }],
+                language: { url: '@Url.Content("~/lib/datatables/i18n/tr.json")' }
+            });
+        });
+    </script>
+}

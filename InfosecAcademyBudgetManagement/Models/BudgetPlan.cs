@@ -8,6 +8,10 @@ namespace InfosecAcademyBudgetManagement.Models
         [Display(Name = "Yıl")]
         public int Year { get; set; }
 
+        [Range(1, 99)]
+        [Display(Name = "Versiyon")]
+        public int VersionNo { get; set; } = 1;
+
         public ICollection<BudgetLine> Lines { get; set; } = [];
     }
 }

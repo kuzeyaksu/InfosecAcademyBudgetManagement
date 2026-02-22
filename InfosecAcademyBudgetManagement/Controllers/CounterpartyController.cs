@@ -19,9 +19,19 @@ namespace InfosecAcademyBudgetManagement.Controllers
         public async Task<IActionResult> Index()
         {
             var items = await _context.Counterparties
+                .AsNoTracking()
                 .Where(x => !x.IsDeleted)
                 .OrderBy(x => x.Type)
                 .ThenBy(x => x.Name)
+                .Select(x => new CounterpartyListItemViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Type = x.Type,
+                    TaxNumber = x.TaxNumber,
+                    Phone = x.Phone,
+                    Email = x.Email
+                })
                 .ToListAsync();
 
             return View(items);
@@ -29,18 +39,28 @@ namespace InfosecAcademyBudgetManagement.Controllers
 
         public IActionResult Create()
         {
-            return View(new Counterparty());
+            return View(new CounterpartyFormViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Type,TaxNumber,Phone,Email,Address,Note")] Counterparty model)
+        public async Task<IActionResult> Create(CounterpartyFormViewModel form)
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(form);
             }
 
+            var model = new Counterparty
+            {
+                Name = form.Name,
+                Type = form.Type,
+                TaxNumber = form.TaxNumber,
+                Phone = form.Phone,
+                Email = form.Email,
+                Address = form.Address,
+                Note = form.Note
+            };
             var now = DateTime.UtcNow;
             model.CreatedAt = now;
             model.UpdatedAt = now;
@@ -59,7 +79,19 @@ namespace InfosecAcademyBudgetManagement.Controllers
 
             var item = await _context.Counterparties
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+                .Where(x => x.Id == id && !x.IsDeleted)
+                .Select(x => new CounterpartyDetailViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Type = x.Type,
+                    TaxNumber = x.TaxNumber,
+                    Phone = x.Phone,
+                    Email = x.Email,
+                    Address = x.Address,
+                    Note = x.Note
+                })
+                .FirstOrDefaultAsync();
 
             if (item is null)
             {
@@ -84,38 +116,50 @@ namespace InfosecAcademyBudgetManagement.Controllers
                 return NotFound();
             }
 
-            return View(item);
+            var form = new CounterpartyFormViewModel
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Type = item.Type,
+                TaxNumber = item.TaxNumber,
+                Phone = item.Phone,
+                Email = item.Email,
+                Address = item.Address,
+                Note = item.Note
+            };
+
+            return View(form);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Type,TaxNumber,Phone,Email,Address,Note")] Counterparty input)
+        public async Task<IActionResult> Edit(CounterpartyFormViewModel form)
         {
-            if (id != input.Id)
+            if (!form.Id.HasValue)
             {
                 return NotFound();
             }
 
             if (!ModelState.IsValid)
             {
-                return View(input);
+                return View(form);
             }
 
             var item = await _context.Counterparties
-                .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+                .FirstOrDefaultAsync(x => x.Id == form.Id.Value && !x.IsDeleted);
 
             if (item is null)
             {
                 return NotFound();
             }
 
-            item.Name = input.Name;
-            item.Type = input.Type;
-            item.TaxNumber = input.TaxNumber;
-            item.Phone = input.Phone;
-            item.Email = input.Email;
-            item.Address = input.Address;
-            item.Note = input.Note;
+            item.Name = form.Name;
+            item.Type = form.Type;
+            item.TaxNumber = form.TaxNumber;
+            item.Phone = form.Phone;
+            item.Email = form.Email;
+            item.Address = form.Address;
+            item.Note = form.Note;
             item.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -131,7 +175,19 @@ namespace InfosecAcademyBudgetManagement.Controllers
 
             var item = await _context.Counterparties
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+                .Where(x => x.Id == id && !x.IsDeleted)
+                .Select(x => new CounterpartyDetailViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Type = x.Type,
+                    TaxNumber = x.TaxNumber,
+                    Phone = x.Phone,
+                    Email = x.Email,
+                    Address = x.Address,
+                    Note = x.Note
+                })
+                .FirstOrDefaultAsync();
 
             if (item is null)
             {

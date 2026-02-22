@@ -21,6 +21,7 @@ namespace InfosecAcademyBudgetManagement.Controllers
             var plans = await _context.BudgetPlans
                 .Where(b => !b.IsDeleted)
                 .OrderByDescending(b => b.Year)
+                .ThenByDescending(b => b.VersionNo)
                 .ToListAsync();
 
             return View(plans);
@@ -40,14 +41,12 @@ namespace InfosecAcademyBudgetManagement.Controllers
                 return View(plan);
             }
 
-            var exists = await _context.BudgetPlans.AnyAsync(b => b.Year == plan.Year && !b.IsDeleted);
-            if (exists)
-            {
-                ModelState.AddModelError(nameof(BudgetPlan.Year), "Bu yıl için zaten bir bütçe planı var.");
-                return View(plan);
-            }
-
             var now = DateTime.UtcNow;
+            var maxVersion = await _context.BudgetPlans
+                .Where(b => b.Year == plan.Year && !b.IsDeleted)
+                .Select(b => (int?)b.VersionNo)
+                .MaxAsync() ?? 0;
+            plan.VersionNo = maxVersion + 1;
             plan.CreatedAt = now;
             plan.UpdatedAt = now;
 
@@ -185,11 +184,63 @@ namespace InfosecAcademyBudgetManagement.Controllers
             return RedirectToAction(nameof(Report), new { year = plan.Year });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CloneVersion(int id)
+        {
+            var sourcePlan = await _context.BudgetPlans
+                .Include(b => b.Lines)
+                .FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted);
+            if (sourcePlan is null)
+            {
+                return NotFound();
+            }
+
+            var now = DateTime.UtcNow;
+            var maxVersion = await _context.BudgetPlans
+                .Where(b => b.Year == sourcePlan.Year && !b.IsDeleted)
+                .Select(b => (int?)b.VersionNo)
+                .MaxAsync() ?? 0;
+
+            var newPlan = new BudgetPlan
+            {
+                Year = sourcePlan.Year,
+                VersionNo = maxVersion + 1,
+                CreatedAt = now,
+                UpdatedAt = now,
+                IsDeleted = false
+            };
+            _context.BudgetPlans.Add(newPlan);
+            await _context.SaveChangesAsync();
+
+            var clonedLines = sourcePlan.Lines
+                .Where(l => !l.IsDeleted)
+                .Select(l => new BudgetLine
+                {
+                    BudgetPlanId = newPlan.Id,
+                    CategoryId = l.CategoryId,
+                    Month = l.Month,
+                    PlannedAmount = l.PlannedAmount,
+                    CreatedAt = now,
+                    UpdatedAt = now,
+                    IsDeleted = false
+                })
+                .ToList();
+
+            _context.BudgetLines.AddRange(clonedLines);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Bütçe versiyonu oluşturuldu: V{newPlan.VersionNo}";
+            return RedirectToAction(nameof(Edit), new { id = newPlan.Id });
+        }
+
         public async Task<IActionResult> Report(int year)
         {
             var plan = await _context.BudgetPlans
                 .Include(b => b.Lines)
-                .FirstOrDefaultAsync(b => b.Year == year && !b.IsDeleted);
+                .Where(b => b.Year == year && !b.IsDeleted)
+                .OrderByDescending(b => b.VersionNo)
+                .FirstOrDefaultAsync();
 
             var monthLabels = Enumerable.Range(1, 12).Select(m => $"{m:00}.{year}").ToList();
             var plannedMonthly = new decimal[12];

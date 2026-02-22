@@ -28,16 +28,22 @@
 @if (User.Identity?.IsAuthenticated == true)
 {
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Gösterge Paneli</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Cost" asp-action="Index">Giderler</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Income" asp-action="Index">Gelirler</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Notification" asp-action="Index">Bildirimler</a>
+                            <a class="nav-link" asp-area="" asp-controller="Counterparty" asp-action="Index">Cari Kartlar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="PurchaseRequest" asp-action="Index">Satın Alma</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="PaymentSchedule" asp-action="Index">Ödeme Takvimi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Report" asp-action="Index">Raporlar</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -46,7 +52,7 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Budget" asp-action="Index">Bütçeler</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Category" asp-action="Index">Kategoriler</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Counterparty" asp-action="Index">Cari Kartlar</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Notification" asp-action="Index">Bildirimler</a></li>
                             </ul>
                         </li>
 @if (User.IsInRole("Yönetici"))
@@ -58,6 +64,7 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="AdminUsers" asp-action="Index">Kullanıcılar</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="EmailSettings" asp-action="Index">E-posta Ayarları</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="AuditLog" asp-action="Index">Audit Log</a></li>
                             </ul>
                         </li>
 }

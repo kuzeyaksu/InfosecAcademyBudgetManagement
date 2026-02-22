@@ -1,0 +1,41 @@
+@model InfosecAcademyBudgetManagement.Models.PurchaseRequestDetailViewModel
+
+@{
+    ViewData["Title"] = "Talep Detay";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Satın Alma Talep Detayı</h1>
+        <div class="page-subtitle">Talep bilgilerini ve onay durumunu görüntüleyin.</div>
+    </div>
+</div>
+
+<div class="card content-card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Başlık</dt>
+            <dd class="col-sm-9">@Model.Title</dd>
+            <dt class="col-sm-3">Tutar</dt>
+            <dd class="col-sm-9">@Model.Amount.ToString("N2") TL</dd>
+            <dt class="col-sm-3">Talep Tarihi</dt>
+            <dd class="col-sm-9">@Model.RequestDate.ToString("dd.MM.yyyy")</dd>
+            <dt class="col-sm-3">Durum</dt>
+            <dd class="col-sm-9">@Model.Status</dd>
+            <dt class="col-sm-3">Talep Eden</dt>
+            <dd class="col-sm-9">@(!string.IsNullOrWhiteSpace(Model.RequestedBy) ? Model.RequestedBy : "-")</dd>
+            <dt class="col-sm-3">Onaylayan</dt>
+            <dd class="col-sm-9">@(!string.IsNullOrWhiteSpace(Model.ApprovedBy) ? Model.ApprovedBy : "-")</dd>
+            <dt class="col-sm-3">Onay Zamanı</dt>
+            <dd class="col-sm-9">@(Model.ApprovedAt.HasValue ? Model.ApprovedAt.Value.ToString("dd.MM.yyyy HH:mm") : "-")</dd>
+            <dt class="col-sm-3">Red Gerekçesi</dt>
+            <dd class="col-sm-9">@(!string.IsNullOrWhiteSpace(Model.RejectionReason) ? Model.RejectionReason : "-")</dd>
+            <dt class="col-sm-3">Açıklama</dt>
+            <dd class="col-sm-9">@(!string.IsNullOrWhiteSpace(Model.Description) ? Model.Description : "-")</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="form-actions mt-3">
+    <a asp-action="Index" class="btn btn-outline-secondary">Geri</a>
+</div>

@@ -1,0 +1,53 @@
+@model InfosecAcademyBudgetManagement.Models.PurchaseRequestFormViewModel
+
+@{
+    ViewData["Title"] = "Satın Alma Talebi";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Satın Alma Talebi Oluştur</h1>
+        <div class="page-subtitle">Yeni talep açın.</div>
+    </div>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Amount" class="form-label"></label>
+                    <div class="input-group">
+                        <input asp-for="Amount" class="form-control" inputmode="decimal" />
+                        <span class="input-group-text">TL</span>
+                    </div>
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="RequestDate" class="form-label"></label>
+                    <input asp-for="RequestDate" class="form-control" type="text" asp-format="{0:dd.MM.yyyy}" placeholder="DD.MM.YYYY" />
+                    <span asp-validation-for="RequestDate" class="text-danger"></span>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-actions mt-2">
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

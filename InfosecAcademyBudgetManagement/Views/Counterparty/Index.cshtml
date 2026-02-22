@@ -1,4 +1,4 @@
-@model IEnumerable<InfosecAcademyBudgetManagement.Models.Counterparty>
+@model IEnumerable<InfosecAcademyBudgetManagement.Models.CounterpartyListItemViewModel>
 
 @{
     ViewData["Title"] = "Cari Kartlar";
@@ -28,7 +28,7 @@
                 </tr>
             </thead>
             <tbody>
-@foreach (var item in Model ?? Enumerable.Empty<InfosecAcademyBudgetManagement.Models.Counterparty>())
+@foreach (var item in Model ?? Enumerable.Empty<InfosecAcademyBudgetManagement.Models.CounterpartyListItemViewModel>())
 {
                 <tr>
                     <td>@item.Name</td>

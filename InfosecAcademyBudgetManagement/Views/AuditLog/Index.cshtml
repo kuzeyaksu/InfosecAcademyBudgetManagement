@@ -1,0 +1,42 @@
+@model IEnumerable<InfosecAcademyBudgetManagement.Models.AuditLogListItemViewModel>
+
+@{
+    ViewData["Title"] = "Audit Log";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Audit Log</h1>
+        <div class="page-subtitle">Son 500 işlem kaydını inceleyin.</div>
+    </div>
+</div>
+
+<div class="card content-card">
+    <div class="card-body">
+        <table class="table table-striped align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Zaman</th>
+                    <th>Kullanıcı</th>
+                    <th>Method</th>
+                    <th>Path</th>
+                    <th>Durum</th>
+                    <th>IP</th>
+                </tr>
+            </thead>
+            <tbody>
+@foreach (var item in Model ?? Enumerable.Empty<InfosecAcademyBudgetManagement.Models.AuditLogListItemViewModel>())
+{
+                <tr>
+                    <td>@item.CreatedAt.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                    <td>@(!string.IsNullOrWhiteSpace(item.UserName) ? item.UserName : "-")</td>
+                    <td>@item.Method</td>
+                    <td>@item.Path</td>
+                    <td>@item.StatusCode</td>
+                    <td>@(!string.IsNullOrWhiteSpace(item.IpAddress) ? item.IpAddress : "-")</td>
+                </tr>
+}
+            </tbody>
+        </table>
+    </div>
+</div>

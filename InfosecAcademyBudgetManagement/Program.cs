@@ -99,6 +99,36 @@ app.UseRouting();
 app.UseRequestLocalization();
 app.UseAuthentication();
 app.UseAuthorization();
+app.Use(async (context, next) =>
+{
+    await next();
+
+    if (HttpMethods.IsGet(context.Request.Method) || context.Request.Path.StartsWithSegments("/lib"))
+    {
+        return;
+    }
+
+    try
+    {
+        using var scope = app.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.AuditLogs.Add(new AuditLog
+        {
+            CreatedAt = DateTime.UtcNow,
+            UserId = context.User?.Identity?.Name,
+            UserName = context.User?.Identity?.Name,
+            Method = context.Request.Method,
+            Path = context.Request.Path.ToString(),
+            StatusCode = context.Response.StatusCode,
+            IpAddress = context.Connection.RemoteIpAddress?.ToString()
+        });
+        await db.SaveChangesAsync();
+    }
+    catch
+    {
+        // no-op: auditing should not break user requests
+    }
+});
 
 using (var scope = app.Services.CreateScope())
 {
