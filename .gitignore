@@ -14,5 +14,6 @@ obj/
 *.publish/
 appsettings.Development.json
 wwwroot/uploads/
+InfosecAcademyBudgetManagement/App_Data/
 **/bin/
 **/obj/
