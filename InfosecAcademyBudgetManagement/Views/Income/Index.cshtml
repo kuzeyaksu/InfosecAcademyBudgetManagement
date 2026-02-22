@@ -1,0 +1,76 @@
+@model IEnumerable<InfosecAcademyBudgetManagement.Models.IncomeItem>
+
+@{
+    ViewData["Title"] = "Gelirler";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Gelirler</h1>
+        <div class="page-subtitle">Tüm gelir kayıtlarını görüntüleyin ve yönetin.</div>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Yeni Ekle
+    </a>
+</div>
+
+<div class="card content-card">
+    <div class="card-body">
+        <table id="incomeTable" class="table table-striped align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Name)</th>
+                    <th>@Html.DisplayNameFor(model => model.Amount)</th>
+                    <th>@Html.DisplayNameFor(model => model.Date)</th>
+                    <th>@Html.DisplayNameFor(model => model.Source)</th>
+                    <th>@Html.DisplayNameFor(model => model.Counterparty)</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+@{
+    var incomes = Model?.ToList() ?? new List<InfosecAcademyBudgetManagement.Models.IncomeItem>();
+    var total = incomes.Sum(x => x.Amount);
+}
+            <tbody>
+@foreach (var item in incomes)
+{
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Amount.ToString("N2") TL</td>
+                    <td>@item.Date.ToString("dd.MM.yyyy")</td>
+                    <td>@item.Source</td>
+                    <td>@(string.IsNullOrWhiteSpace(item.Counterparty) ? "-" : item.Counterparty)</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td><strong>Toplam</strong></td>
+                    <td><strong>@total.ToString("N2") TL</strong></td>
+                    <td colspan="4"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $("#incomeTable").DataTable({
+                pageLength: 10,
+                lengthChange: false,
+                pagingType: "simple_numbers",
+                order: [[2, "desc"]],
+                columnDefs: [{ orderable: false, targets: [5] }],
+                language: { url: '@Url.Content("~/lib/datatables/i18n/tr.json")' },
+                dom: "frtip"
+            });
+        });
+    </script>
+}

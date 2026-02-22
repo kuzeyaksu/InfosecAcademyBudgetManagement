@@ -13,6 +13,8 @@ namespace InfosecAcademyBudgetManagement.Data
         }
 
         public DbSet<CostItem> CostItems { get; set; }
+        public DbSet<IncomeItem> IncomeItems { get; set; }
+        public DbSet<Counterparty> Counterparties { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<BudgetPlan> BudgetPlans { get; set; }
         public DbSet<BudgetLine> BudgetLines { get; set; }
@@ -36,6 +38,17 @@ namespace InfosecAcademyBudgetManagement.Data
                 entity.Property(e => e.SenderName).HasMaxLength(100);
                 entity.Property(e => e.Username).HasMaxLength(256).IsRequired();
                 entity.Property(e => e.EncryptedPassword).IsRequired();
+            });
+
+            modelBuilder.Entity<Counterparty>(entity =>
+            {
+                entity.Property(c => c.Name).HasMaxLength(150).IsRequired();
+                entity.Property(c => c.Type).HasMaxLength(30).IsRequired();
+                entity.Property(c => c.TaxNumber).HasMaxLength(30);
+                entity.Property(c => c.Phone).HasMaxLength(30);
+                entity.Property(c => c.Email).HasMaxLength(120);
+                entity.Property(c => c.Address).HasMaxLength(250);
+                entity.Property(c => c.Note).HasMaxLength(500);
             });
 
             modelBuilder.Entity<CostItem>()

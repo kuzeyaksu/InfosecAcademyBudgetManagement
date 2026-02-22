@@ -1,0 +1,57 @@
+@model InfosecAcademyBudgetManagement.Models.NotificationViewModel
+
+@{
+    ViewData["Title"] = "Bildirim Merkezi";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Bildirim Merkezi</h1>
+        <div class="page-subtitle">Operasyonel finans ve bütçe uyarılarını takip edin.</div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card content-card h-100">
+            <div class="card-body">
+                <div class="small text-muted">Kritik</div>
+                <div class="h3 mb-0 text-danger">@Model.CriticalCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card content-card h-100">
+            <div class="card-body">
+                <div class="small text-muted">Uyarı</div>
+                <div class="h3 mb-0 text-warning">@Model.WarningCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card content-card h-100">
+            <div class="card-body">
+                <div class="small text-muted">Bilgi</div>
+                <div class="h3 mb-0 text-primary">@Model.InfoCount</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card content-card">
+    <div class="card-body">
+@foreach (var item in Model.Items)
+{
+    var css = item.Level switch
+    {
+        InfosecAcademyBudgetManagement.Models.NotificationLevel.Critical => "danger",
+        InfosecAcademyBudgetManagement.Models.NotificationLevel.Warning => "warning",
+        _ => "info"
+    };
+        <div class="alert alert-@css mb-3">
+            <div class="fw-semibold">@item.Title</div>
+            <div>@item.Message</div>
+        </div>
+}
+    </div>
+</div>

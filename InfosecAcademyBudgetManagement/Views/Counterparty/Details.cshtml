@@ -1,0 +1,44 @@
+@model InfosecAcademyBudgetManagement.Models.Counterparty
+
+@{
+    ViewData["Title"] = "Cari Detay";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Cari Detay</h1>
+        <div class="page-subtitle">Kayıt detaylarını inceleyin.</div>
+    </div>
+</div>
+
+<div class="card content-card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Name)</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Type)</dt>
+            <dd class="col-sm-9">@Model.Type</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(m => m.TaxNumber)</dt>
+            <dd class="col-sm-9">@(!string.IsNullOrWhiteSpace(Model.TaxNumber) ? Model.TaxNumber : "-")</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Phone)</dt>
+            <dd class="col-sm-9">@(!string.IsNullOrWhiteSpace(Model.Phone) ? Model.Phone : "-")</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Email)</dt>
+            <dd class="col-sm-9">@(!string.IsNullOrWhiteSpace(Model.Email) ? Model.Email : "-")</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Address)</dt>
+            <dd class="col-sm-9">@(!string.IsNullOrWhiteSpace(Model.Address) ? Model.Address : "-")</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Note)</dt>
+            <dd class="col-sm-9">@(!string.IsNullOrWhiteSpace(Model.Note) ? Model.Note : "-")</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="form-actions mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Düzenle</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Geri</a>
+</div>
